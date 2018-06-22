@@ -356,9 +356,9 @@ verstr(A) when is_record(A, semver) ->
     semver:to_tag(A).
 
 sh(Cmd, Opts) ->
-    sh:sh(Cmd, [{use_stdout, false}, return_on_error] ++ Opts).
+    git_sh:sh(Cmd, [{use_stdout, false}, return_on_error] ++ Opts).
 sh(Cmd, Args, Opts) ->
-    sh:sh(Cmd, Args, [{use_stdout, false}, return_on_error] ++ Opts).
+    git_sh:sh(Cmd, Args, [{use_stdout, false}, return_on_error] ++ Opts).
 
 oksh(Cmd, Opts) ->
     {ok, Rep} = sh(Cmd, Opts),
