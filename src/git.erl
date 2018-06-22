@@ -98,8 +98,23 @@ clone(RepoURL, RepoPath) ->
     clone(RepoURL, RepoPath, []).
 -spec clone(url(), dir(), [option()]) -> {'ok', string()} | {'error', term()}.
 clone(RepoURL, RepoPath, Opts) ->
-    ok = filelib:ensure_dir(RepoPath),
-    sh(clone_cmd(RepoURL, RepoPath, Opts), []).
+    case is_tmp(RepoPath) of 
+        true -> 
+            sh(rmdir_cmd(RepoPath), []),
+            ok = filelib:ensure_dir(RepoPath),
+            sh(clone_cmd(RepoURL, RepoPath, Opts), []);
+        false ->
+            {error, not_a_tmp_folder}
+    end.
+
+is_tmp(Path) ->
+    case re:run(Path, "^/tmp") of 
+        {match, _} -> true;
+        nomath -> false
+    end.
+
+rmdir_cmd(Path) ->
+    fformat("rm -rf ~s", [Path]).
 
 clone_cmd(RepoURL, RepoPath, Opts) ->
     fformat("git clone ~s \"~s\" \"~s\"", [opts(Opts), RepoURL, RepoPath]).
